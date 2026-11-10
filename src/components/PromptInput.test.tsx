@@ -33,6 +33,32 @@ describe('PromptInput', () => {
     expect(screen.getByRole('button', { name: '컴포넌트 생성' })).toBeDisabled();
   });
 
+  it('히스토리가 있으면 항목을 보여주고 클릭하면 입력창에 채운다', async () => {
+    const user = userEvent.setup();
+    render(
+      <PromptInput onGenerate={vi.fn()} isLoading={false} history={['이전 프롬프트']} onClearHistory={vi.fn()} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: '이전 프롬프트' }));
+    expect(screen.getByRole('textbox')).toHaveValue('이전 프롬프트');
+  });
+
+  it('히스토리 삭제 버튼을 누르면 onClearHistory가 호출된다', async () => {
+    const onClearHistory = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <PromptInput onGenerate={vi.fn()} isLoading={false} history={['a']} onClearHistory={onClearHistory} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: '기록 삭제' }));
+    expect(onClearHistory).toHaveBeenCalled();
+  });
+
+  it('히스토리가 비어 있으면 히스토리 영역을 보여주지 않는다', () => {
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={[]} onClearHistory={vi.fn()} />);
+    expect(screen.queryByText('최근 프롬프트')).not.toBeInTheDocument();
+  });
+
   it('로딩 중에는 생성 버튼이 비활성이고 "생성 중..." 을 보여준다', () => {
     render(<PromptInput onGenerate={vi.fn()} isLoading={true} />);
     expect(screen.getByRole('button', { name: '생성 중...' })).toBeDisabled();

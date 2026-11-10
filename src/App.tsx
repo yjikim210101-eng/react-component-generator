@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react';
 import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import {
+  addToHistory,
+  EMPTY_API_KEYS,
+  reviveApiKeys,
+  reviveProvider,
+  reviveStringList,
+  type ApiKeys,
+} from './utils/persistence';
 import type { Provider } from './types';
 import './App.css';
 
@@ -11,9 +20,12 @@ const PROVIDER_CONFIG = {
 } as const;
 
 function App() {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKeys, setApiKeys] = useLocalStorage<ApiKeys>('rcg:apiKeys', EMPTY_API_KEYS, reviveApiKeys);
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = useState<Provider>('google');
+  const [provider, setProvider] = useLocalStorage<Provider>('rcg:provider', 'google', reviveProvider);
+  const apiKey = apiKeys[provider];
+  const setApiKey = (value: string) => setApiKeys((prev) => ({ ...prev, [provider]: value }));
+  const [history, setHistory] = useLocalStorage<string[]>('rcg:promptHistory', [], reviveStringList);
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,
@@ -35,12 +47,12 @@ function App() {
       alert(`${PROVIDER_CONFIG[provider].label} API 키를 입력하거나 .env에 설정해주세요.`);
       return;
     }
+    setHistory((prev) => addToHistory(prev, prompt));
     generate(prompt, apiKey || undefined, provider);
   };
 
   const handleProviderChange = (newProvider: Provider) => {
     setProvider(newProvider);
-    setApiKey('');
   };
 
   const activeProvider = PROVIDER_CONFIG[provider].label;
@@ -74,7 +86,12 @@ function App() {
             <span className="win-title">프롬프트</span>
           </div>
           <div className="win-body">
-            <PromptInput onGenerate={handleGenerate} isLoading={isLoading} />
+            <PromptInput
+              onGenerate={handleGenerate}
+              isLoading={isLoading}
+              history={history}
+              onClearHistory={() => setHistory([])}
+            />
           </div>
         </section>
 
