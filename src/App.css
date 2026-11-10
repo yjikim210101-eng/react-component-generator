@@ -323,6 +323,13 @@
   align-items: end;
 }
 
+.prompt-error {
+  grid-column: 1 / -1;
+  color: var(--alert);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
 .prompt-textarea {
   min-height: 140px;
   padding: 16px;
