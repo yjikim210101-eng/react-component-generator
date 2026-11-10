@@ -17,6 +17,7 @@
 
 - API 키 값을 클라이언트 응답에 포함하지 않는다. `/api/config`는 키 존재 여부(boolean)만 반환한다 (`server/index.ts:147-157`). 키 문자열을 응답, 로그, 클라이언트 번들에 노출하는 변경 금지.
 - `.env`는 커밋하지 않는다 (`.gitignore`). 키를 코드에 하드코딩하지 않는다.
+- 민감 파일(`.env`, `.env.*`, `*credential*`, `*secret*`, `*.pem`, `*.key`, `.npmrc`, `.netrc`, `.aws/`, `.ssh/` 등)은 읽기·수정·생성 모두 금지다. `.claude/settings.json`의 `permissions.deny`로 Read/Edit/Write/Bash/PowerShell을 차단한다. cat, grep, 리다이렉션 등 셸로 우회해 접근하지 않는다. 키가 필요하면 사용자에게 직접 설정해 달라고 요청한다. 차단 패턴을 바꿀 때 `deny` 목록과 이 규칙을 함께 갱신한다.
 - 사용자가 UI에서 입력한 API 키는 프로바이더별로 localStorage(`rcg:apiKeys`)에만 저장한다 (`src/App.tsx:23`). 사용자 요청으로 도입된 결정이다. sessionStorage, 쿠키, 로그, 서버 응답 등 다른 곳에 복제하지 않는다. 키는 요청 본문으로만 서버에 보낸다.
 
 ### Hard Constraint
