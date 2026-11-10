@@ -17,7 +17,7 @@
 
 - API 키 값을 클라이언트 응답에 포함하지 않는다. `/api/config`는 키 존재 여부(boolean)만 반환한다 (`server/index.ts:147-157`). 키 문자열을 응답, 로그, 클라이언트 번들에 노출하는 변경 금지.
 - `.env`는 커밋하지 않는다 (`.gitignore`). 키를 코드에 하드코딩하지 않는다.
-- 사용자가 UI에서 입력한 `apiKey`는 React state에만 둔다 (`src/App.tsx:14`). localStorage 등에 영속화하지 않는다.
+- 사용자가 UI에서 입력한 API 키는 프로바이더별로 localStorage(`rcg:apiKeys`)에만 저장한다 (`src/App.tsx:23`). 사용자 요청으로 도입된 결정이다. sessionStorage, 쿠키, 로그, 서버 응답 등 다른 곳에 복제하지 않는다. 키는 요청 본문으로만 서버에 보낸다.
 
 ### Hard Constraint
 
