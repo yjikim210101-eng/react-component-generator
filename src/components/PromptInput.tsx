@@ -8,6 +8,8 @@ interface PromptInputProps {
   onClearHistory?: () => void;
 }
 
+const HISTORY_PREVIEW_LENGTH = 60;
+
 const EXAMPLES = [
   'SaaS 관리자용 KPI 카드 3개. 매출, 활성 사용자, 전환율을 비교 가능한 형태로 표시',
   '설정 페이지의 알림 토글 패널. 이메일, 슬랙, 주간 리포트 옵션 포함',
@@ -72,9 +74,10 @@ export function PromptInput({ onGenerate, isLoading, history = [], onClearHistor
               key={item}
               className="example-chip"
               onClick={() => handleExampleClick(item)}
+              title={item}
               type="button"
             >
-              {item}
+              {item.length > HISTORY_PREVIEW_LENGTH ? `${item.slice(0, HISTORY_PREVIEW_LENGTH)}…` : item}
             </button>
           ))}
           <button className="btn-clear" onClick={onClearHistory} type="button">

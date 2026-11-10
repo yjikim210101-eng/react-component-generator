@@ -6,7 +6,7 @@ React 19 SPA. 사용자 입력을 받아 `/api/generate`를 호출하고 결과�
 
 ## Tech Stack & Constraints
 
-- 서버 호출은 상대 경로 `/api/*`만 쓴다 (`src/hooks/useComponentGenerator.ts:23`, `src/App.tsx:25`). Vite proxy가 3002로 넘긴다. `localhost:3002`를 하드코딩하거나 AI 엔드포인트를 브라우저에서 직접 호출하지 않는다.
+- 서버 호출은 상대 경로 `/api/*`만 쓴다 (`src/hooks/useComponentGenerator.ts:29`, `src/App.tsx:37`). Vite proxy가 3002로 넘긴다. `localhost:3002`를 하드코딩하거나 AI 엔드포인트를 브라우저에서 직접 호출하지 않는다.
 - 스타일은 `src/App.css`, `src/index.css`의 일반 className 방식이다. CSS-in-JS, CSS modules, UI 라이브러리를 새로 도입하지 않는다.
 - ESLint가 `react-refresh/only-export-components`를 적용한다 (`eslint.config.js:17`). 컴포넌트 파일에서 컴포넌트 외의 값을 export하지 않는다. 상수와 헬퍼는 모듈 내부에 두거나 별도 파일로 분리한다.
 

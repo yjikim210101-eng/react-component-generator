@@ -5,6 +5,7 @@ import {
   reviveApiKeys,
   reviveComponents,
   reviveProvider,
+  reviveStringList,
 } from './persistence';
 
 describe('addToHistory', () => {
@@ -22,6 +23,21 @@ describe('addToHistory', () => {
     expect(next).toHaveLength(MAX_HISTORY);
     expect(next[0]).toBe('new');
     expect(next).not.toContain(`p${MAX_HISTORY - 1}`);
+  });
+});
+
+describe('reviveStringList', () => {
+  it('문자열이 아닌 항목과 중복을 제거한다', () => {
+    expect(reviveStringList(['a', 1, 'a', 'b', null])).toEqual(['a', 'b']);
+  });
+
+  it(`최대 ${MAX_HISTORY}개까지만 유지한다`, () => {
+    const many = Array.from({ length: MAX_HISTORY + 10 }, (_, i) => `p${i}`);
+    expect(reviveStringList(many)).toHaveLength(MAX_HISTORY);
+  });
+
+  it('배열이 아니면 undefined를 반환한다', () => {
+    expect(reviveStringList('x')).toBeUndefined();
   });
 });
 

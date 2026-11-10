@@ -43,6 +43,15 @@ describe('PromptInput', () => {
     expect(screen.getByRole('textbox')).toHaveValue('이전 프롬프트');
   });
 
+  it('긴 히스토리 항목은 잘라서 보여주고 전체는 title에 둔다', () => {
+    const long = '가'.repeat(200);
+    render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={[long]} onClearHistory={vi.fn()} />);
+
+    const chip = screen.getByTitle(long);
+    expect(chip.textContent!.length).toBeLessThan(long.length);
+    expect(chip.textContent).toMatch(/…$/);
+  });
+
   it('히스토리 삭제 버튼을 누르면 onClearHistory가 호출된다', async () => {
     const onClearHistory = vi.fn();
     const user = userEvent.setup();

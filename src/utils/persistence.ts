@@ -1,6 +1,7 @@
 import type { GeneratedComponent, Provider } from '../types';
 
 export const MAX_HISTORY = 20;
+export const MAX_COMPONENTS = 50;
 
 /** 프롬프트를 맨 앞에 추가한다. 중복은 제거하고 최대 MAX_HISTORY개만 유지한다. */
 export function addToHistory(history: string[], prompt: string): string[] {
@@ -25,8 +26,11 @@ export function reviveApiKeys(raw: unknown): ApiKeys | undefined {
   };
 }
 
+/** 문자열 목록을 복원한다. 문자열이 아닌 항목과 중복은 버리고 MAX_HISTORY개까지만 유지한다. */
 export function reviveStringList(raw: unknown): string[] | undefined {
-  return Array.isArray(raw) ? raw.filter((v): v is string => typeof v === 'string') : undefined;
+  if (!Array.isArray(raw)) return undefined;
+  const strings = raw.filter((v): v is string => typeof v === 'string');
+  return [...new Set(strings)].slice(0, MAX_HISTORY);
 }
 
 /** 저장된 JSON에서 GeneratedComponent[]를 복원한다. createdAt은 Date로 되돌린다. */

@@ -30,6 +30,23 @@ describe('useLocalStorage', () => {
     expect(result.current[0]).toBe('init');
   });
 
+  it('다른 탭에서 같은 키가 바뀌면 값을 갱신한다', () => {
+    const { result } = renderHook(() => useLocalStorage('k', 'init'));
+    act(() => {
+      localStorage.setItem('k', JSON.stringify('from-other-tab'));
+      window.dispatchEvent(new StorageEvent('storage', { key: 'k', newValue: JSON.stringify('from-other-tab') }));
+    });
+    expect(result.current[0]).toBe('from-other-tab');
+  });
+
+  it('다른 키의 storage 이벤트는 무시한다', () => {
+    const { result } = renderHook(() => useLocalStorage('k', 'init'));
+    act(() => {
+      window.dispatchEvent(new StorageEvent('storage', { key: 'other', newValue: JSON.stringify('x') }));
+    });
+    expect(result.current[0]).toBe('init');
+  });
+
   it('revive가 undefined를 반환하면 초기값을 쓴다', () => {
     localStorage.setItem('k', JSON.stringify('invalid'));
     const { result } = renderHook(() =>
