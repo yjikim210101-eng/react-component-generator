@@ -1,21 +1,27 @@
 import { useState, useCallback } from 'react';
+import { useLocalStorage } from './useLocalStorage';
+import { MAX_COMPONENTS, reviveComponents } from '../utils/persistence';
 import type { GeneratedComponent, Provider } from '../types';
 
 interface UseComponentGeneratorReturn {
   components: GeneratedComponent[];
   isLoading: boolean;
   error: string | null;
-  generate: (prompt: string, apiKey: string | undefined, provider: Provider) => Promise<void>;
+  generate: (prompt: string, apiKey: string | undefined, provider: Provider) => Promise<boolean>;
   removeComponent: (id: string) => void;
   clearAll: () => void;
 }
 
 export function useComponentGenerator(): UseComponentGeneratorReturn {
-  const [components, setComponents] = useState<GeneratedComponent[]>([]);
+  const [components, setComponents] = useLocalStorage<GeneratedComponent[]>(
+    'rcg:components',
+    [],
+    reviveComponents,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generate = useCallback(async (prompt: string, apiKey: string | undefined, provider: Provider) => {
+  const generate = useCallback(async (prompt: string, apiKey: string | undefined, provider: Provider): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
@@ -39,22 +45,24 @@ export function useComponentGenerator(): UseComponentGeneratorReturn {
         createdAt: new Date(),
       };
 
-      setComponents((prev) => [newComponent, ...prev]);
+      setComponents((prev) => [newComponent, ...prev].slice(0, MAX_COMPONENTS));
+      return true;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
+      return false;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setComponents]);
 
   const removeComponent = useCallback((id: string) => {
     setComponents((prev) => prev.filter((c) => c.id !== id));
-  }, []);
+  }, [setComponents]);
 
   const clearAll = useCallback(() => {
     setComponents([]);
-  }, []);
+  }, [setComponents]);
 
   return { components, isLoading, error, generate, removeComponent, clearAll };
 }
