@@ -1,0 +1,65 @@
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --desk: #3a4fa0;
+  --desk-dark: #2f4190;
+  --platinum: #d8d8d0;
+  --platinum-hi: #f4f4ee;
+  --platinum-lo: #9a9a92;
+  --ink: #15151f;
+  --paper: #fbfbf6;
+  --signal: #ffcf33;
+  --signal-deep: #e0a800;
+  --mint: #2f9e6f;
+  --alert: #d93a3a;
+  --font-ui: 'Galmuri11', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  --font-code: 'GalmuriMono11', 'D2Coding', Consolas, monospace;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--desk);
+  background-image: conic-gradient(
+    var(--desk-dark) 25%,
+    transparent 0 50%,
+    var(--desk-dark) 0 75%,
+    transparent 0
+  );
+  background-size: 4px 4px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--signal);
+}
